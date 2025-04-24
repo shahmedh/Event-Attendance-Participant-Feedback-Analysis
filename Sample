@@ -1,0 +1,62 @@
+## Interactive Insights: Event Attendance & Participant Feedback Analysis 
+##This database has colums with the following titles
+##Event, Registered, Attended, Rating, Feedback_Submitted (Boolean: True/False)
+## and city , registration methods
+
+pip install pandas seaborn matplotlib
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv('event_data.csv')  # Replace with your actual file
+
+# Attendance Rate per Event
+df_grouped = df.groupby('Event').agg({'Registered': 'sum', 'Attended': 'sum'}).reset_index()
+df_grouped['Attendance Rate (%)'] = (df_grouped['Attended'] / df_grouped['Registered']) * 100
+
+plt.figure(figsize=(8,5))
+sns.barplot(x='Event', y='Attendance Rate (%)', data=df_grouped, palette='Blues_d')
+plt.title('Attendance Rate per Event')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Average Rating by Event
+avg_rating = df.groupby('Event')['Rating'].mean().reset_index()
+
+plt.figure(figsize=(8,5))
+sns.barplot(x='Event', y='Rating', data=avg_rating, palette='Greens_d')
+plt.title('Average Rating by Event')
+plt.ylim(0, 5)
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Feedback Submission Rate
+feedback_counts = df['Feedback_Submitted'].value_counts()
+plt.figure(figsize=(6,6))
+plt.pie(feedback_counts, labels=['Submitted', 'Not Submitted'], autopct='%1.1f%%', colors=['#66b3ff', '#ff9999'])
+plt.title('Feedback Submission Rate')
+plt.tight_layout()
+plt.show()
+
+# Registration Method Breakdown
+method_counts = df['Registration_Method'].value_counts().reset_index()
+method_counts.columns = ['Method', 'Count']
+
+plt.figure(figsize=(8,5))
+sns.barplot(x='Method', y='Count', data=method_counts, palette='Purples_d')
+plt.title('Registration Method Breakdown')
+plt.tight_layout()
+plt.show()
+
+# City-wise Attendance
+city_attendance = df.groupby('City')['Attended'].sum().reset_index()
+
+plt.figure(figsize=(8,5))
+sns.barplot(x='City', y='Attended', data=city_attendance, palette='Oranges_d')
+plt.title('City-wise Attendance')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
